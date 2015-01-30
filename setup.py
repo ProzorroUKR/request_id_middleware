@@ -19,8 +19,11 @@ setup(name='request_id_middleware',
       zip_safe=False,
       install_requires=[
           # -*- Extra requirements: -*-
+          'oslo.middleware',
       ],
       entry_points="""
       # -*- Entry points: -*-
+      [paste.filter_app_factory]
+      request_id_middleware = request_id_middleware.middleware.RequestIdMiddleware:factory
       """,
       )
