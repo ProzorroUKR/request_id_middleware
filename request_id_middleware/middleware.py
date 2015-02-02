@@ -16,9 +16,8 @@ class RequestIdMiddleware(base.Middleware):
     """
     @classmethod
     def factory(cls, global_conf, 
-    		env_request_id='x_request_id',
-    		resp_header_request_id = 'x-request-id'
-    		):
+                env_request_id='x_request_id',
+                resp_header_request_id = 'X-Request-ID'):
 
         cls.env_request_id = env_request_id
         cls.resp_header_request_id = resp_header_request_id
@@ -26,7 +25,11 @@ class RequestIdMiddleware(base.Middleware):
 
     @webob.dec.wsgify
     def __call__(self, req):
-        req_id = context.generate_request_id()
+        if self.resp_header_request_id in req.headers:
+            req_id = req.headers[self.resp_header_request_id]
+        else:
+            req_id = context.generate_request_id()
+
         req.environ[self.env_request_id] = req_id
         response = req.get_response(self.application)
         if self.resp_header_request_id not in response.headers:
